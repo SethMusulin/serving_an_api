@@ -8,4 +8,9 @@ module ObjectCreationMethods
     defaults = {}
     Make.create!(attributes.merge(defaults))
   end
+
+  def create_car(attributes = {})
+    defaults = {}
+    Car.create!(attributes.merge(defaults))
+  end
 end
