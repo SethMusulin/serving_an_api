@@ -144,4 +144,31 @@ describe 'POST /cars' do
     expect(response.code.to_i).to eq(401)
     expect(JSON.parse(response.body)).to eq(expected_response)
   end
+
+  it "does not alow a user with an invalid token to create a car" do
+    user = create_user
+    invalid_token = '1234-42342342-23234'
+
+    expect(user.api_authentication_token).to_not eq invalid_token
+
+    ford = create_make(name: "Ford")
+
+    headers = {
+        'Accept' => 'application/json',
+        'Authorization' => invalid_token
+    }
+
+    posted_data = {
+        "make_id" => ford.id,
+        "color" => 'blue',
+        "doors" => 2,
+        "purchased_on" => "2012-01-24"
+    }.to_json
+
+    expect { post '/cars', posted_data, headers }.to change { Car.count }.by(0)
+    expected_response = {}
+
+    expect(response.code.to_i).to eq(401)
+    expect(JSON.parse(response.body)).to eq(expected_response)
+  end
 end
