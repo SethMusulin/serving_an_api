@@ -4,7 +4,11 @@ class CarsController < ActionController::Base
   end
 
   def show
-    @car = Car.find(params[:id])
-    @make = Make.find(@car.make_id)
+    if Car.find_by(id: params[:id])
+      @car = Car.find(params[:id])
+      @make = Make.find(@car.make_id)
+    else
+      render json: {}, status: 404
+    end
   end
 end

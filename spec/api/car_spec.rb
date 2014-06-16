@@ -73,4 +73,13 @@ describe 'GET /cars/:id' do
     expect(response.code.to_i).to eq 200
     expect(JSON.parse(response.body)).to eq(expected_response)
   end
+
+  it 'returns a 404 if the car can not be found' do
+    get '/cars/999', {}, {'Accept' => 'application/json'}
+
+    expected_response = {}
+
+    expect(response.code.to_i).to eq(404)
+    expect(JSON.parse(response.body)).to eq(expected_response)
+  end
 end
