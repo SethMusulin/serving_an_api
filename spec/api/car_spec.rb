@@ -83,3 +83,40 @@ describe 'GET /cars/:id' do
     expect(JSON.parse(response.body)).to eq(expected_response)
   end
 end
+
+describe 'POST /cars' do
+  it 'allows users with a token to create a car' do
+    user = create_user
+
+    ford = create_make(name: "Ford")
+
+    headers = {
+        'Accept' => 'application/json',
+    }
+
+    posted_data = {
+        "make_id" => ford.id,
+        "color" => 'blue',
+        "doors" => 2,
+        "purchased_on" => "2012-01-24"
+    }.to_json
+
+    expect { post '/cars', posted_data, headers }.to change { Car.count }.by(1)
+
+    created_car = Car.last
+
+    expected_response = {
+        "_links" => {
+            "self" => {"href" => car_path(created_car)},
+            "make" => {"href" => make_path(ford)},
+        },
+        "id" => created_car.id,
+        "color" => "blue",
+        "doors" => 2,
+        "purchased_on" => "2012-01-24"
+    }
+
+    expect(response.code.to_i).to eq(201)
+    expect(JSON.parse(response.body)).to eq(expected_response)
+  end
+end
